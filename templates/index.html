@@ -13,22 +13,44 @@ Homepage
 	<div class="header-layer">
 		<div class="carousel-container">
 			<div id="carouselIndicators" class="carousel slide" data-ride="carousel">
+
+				<div class="carousel-inner">
+					<div class="carousel-item active">
+						<div class="headline-image-container">
+							<img src="{{ headlines.articles[0].urlToImage }}" alt="{{ headlines.articles[0].title }}" class="headline-preview-image">
+						</div>
+						<div class="headline-image-layer"></div>
+						<div class="headline-text-container">
+							<h3 class="headline-title">{{ headlines.articles[0].title }}</h3>
+							<p class="headline-description">{{ headlines.articles[0].description }}</p>
+						</div>
+					</div>
+					<div class="carousel-item">
+						<div class="headline-image-container">
+							<img src="{{ headlines.articles[1].urlToImage }}" alt="{{ headlines.articles[1].title }}" class="headline-preview-image">
+						</div>
+						<div class="headline-image-layer"></div>
+						<div class="headline-text-container">
+							<h3 class="headline-title">{{ headlines.articles[1].title }}</h3>
+							<p class="headline-description">{{ headlines.articles[1].description }}</p>
+						</div>
+					</div>
+					<div class="carousel-item">
+						<div class="headline-image-container">
+							<img src="{{ headlines.articles[2].urlToImage }}" alt="{{ headlines.articles[2].title }}" class="headline-preview-image">
+						</div>
+						<div class="headline-image-layer"></div>
+						<div class="headline-text-container">
+							<h3 class="headline-title">{{ headlines.articles[2].title }}</h3>
+							<p class="headline-description">{{ headlines.articles[2].description }}</p>
+						</div>
+					</div>
+				</div>
 				<ol class="carousel-indicators">
 					<li data-target="#carouselIndicators" data-slide-to="0" class="active"></li>
 					<li data-target="#carouselIndicators" data-slide-to="1"></li>
 					<li data-target="#carouselIndicators" data-slide-to="2"></li>
 				</ol>
-				<div class="carousel-inner">
-					<div class="carousel-item active">
-						<h3>First slide</h3>
-					</div>
-					<div class="carousel-item">
-						<h3>Second slide</h3>
-					</div>
-					<div class="carousel-item">
-						<h3>Third slide</h3>
-					</div>
-				</div>
 				<a class="carousel-control-prev" href="#carouselIndicators" role="button" data-slide="prev">
 					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
 					<span class="sr-only">Previous</span>
@@ -42,19 +64,21 @@ Homepage
 	</div>
 </div>
 
-<div class="divider shadow"></div>
+<div class="divider shadow rounded-pill"></div>
 
 <main class="container">
 	<div class="feed">
-		<h2>Feed</h2>
-
-		<div class='post-container shadow'>Post 1</div>
-		<div class='post-container shadow'>Post 2</div>
-		<div class='post-container shadow'>Post 3</div>
-		<div class='post-container shadow'>Post 4</div>
-		<div class='post-container shadow'>Post 5</div>
-		<div class='post-container shadow'>Post 6</div>
-		<div class='post-container shadow'>Post 7</div>
+		{% for article in articles.articles %}
+		<div class='post-container shadow'>
+			<div class="image-container">
+				<img src="{{ article.urlToImage }}" alt="{{ article.title }}" class="article-preview-image">
+			</div>
+			<div class='text-container'>
+				<h3>{{ article.title }}</h3>
+				<p>{{ article.description }}</p>
+			</div>
+		</div>
+		{% endfor %}
 	</div>
 </main>
 {% endblock %}
