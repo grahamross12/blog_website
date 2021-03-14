@@ -7,7 +7,9 @@ Homepage
 {% block main %}
 
 <script src="static/js/index.js"></script>
+<script src="static/js/results.js"></script>
 <link href="static/css/index.css" rel="stylesheet">
+<link href="static/css/results.css" rel="stylesheet">
 
 <div class="header-margin shadow-lg" >
 	<div class="header-layer">
@@ -64,21 +66,25 @@ Homepage
 	</div>
 </div>
 
-<div class="divider shadow rounded-pill"></div>
 
 <main class="container">
-	<div class="feed">
-		{% for article in articles.articles %}
-		<div class='post-container shadow'>
-			<div class="image-container">
-				<img src="{{ article.urlToImage }}" alt="{{ article.title }}" class="article-preview-image">
+		<div class="feed">
+			<div class="divider"></div>
+			<h3>Sport</h3>
+			{% for article in sport.articles %}
+			<div class='post-container shadow'>
+				<div class="image-container">
+					<img src="{{ article.urlToImage }}" alt="{{ article.title }}" class="article-preview-image">
+				</div>
+				<div class='text-container'>
+					<a class="article-title" target="_blank" href="{{ article.url }}"><h3>{{ article.title }}</h3></a>
+					<p>{{ article.description }}</p>
+				</div>
+				<a class="save-button">
+			        <p class="plus">+</p>
+				</a>
 			</div>
-			<div class='text-container'>
-				<h3>{{ article.title }}</h3>
-				<p>{{ article.description }}</p>
-			</div>
+			{% endfor %}
 		</div>
-		{% endfor %}
-	</div>
 </main>
 {% endblock %}

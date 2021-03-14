@@ -2,6 +2,11 @@
 	border-radius: 10px !important;
 }
 
+.navbar
+{
+  background-color: transparent !important;
+}
+
 .post-container {
 	width: 100%;
 	height: 200px;
@@ -32,10 +37,12 @@
 }
 
 .carousel-container {
-	max-width: 1000px;
+	width: 1000px;
 	height: 600px;
-	margin: auto;
-	justify-content: center;
+	position: absolute;
+  	bottom: 0;
+  	left: 50%;
+  	margin-left: -500px;
 }
 
 .header-margin {
@@ -43,11 +50,17 @@
 	background-size: 2560px;
 	background-repeat: no-repeat;
 	background-attachment: fixed;
-  background-position: center;
+  	background-position: center;
+  	position: relative;
+  	margin-top: -100px;
+  	height: 800px;
 }
 
 .header-layer {
 	background-color: rgb(0 0 0 / 50%);
+	background-image: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1));
+	position: relative;
+	height: 100%;
 }
 
 .carousel {
@@ -55,34 +68,14 @@
 }
 
 .divider {
-  height: 80px;
-  background-color: #222;
-  position: relative;
-  width: 1300px;
-  margin: auto;
-}
-
-.feed {
-  padding: 50px;
-}
-
-.article-preview-image {
-	height: 100%;
-	object-fit: contain;
-	float: right;
-	position:relative;
-}
-
-.image-container {
+	height: 2px;
+	background-color: #222;
 	position: relative;
-	margin-top: 0px;
-	padding: 0px;
-	height: 100%;
-	width: 400px;
-	float: right;
-	height: 100%;
-	text-align: right
+	width: 100%;
+	margin: auto;
 }
+
+
 
 .headline-image-container {
 	padding: 0px;
@@ -96,12 +89,6 @@
 	width: 100%;
 	object-fit: cover;
 
-}
-
-.text-container {
-	padding: 10px;
-	max-height: 100%;
-	text-align: right;
 }
 
 .carousel-item {

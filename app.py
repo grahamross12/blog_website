@@ -6,6 +6,7 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
 from newsapi import NewsApiClient
+from helpers import login_required
 
 # Initialise NewsAPI
 newsapi = NewsApiClient(api_key='f29c5ca7a2d544889ceaf1396eb0cc75')
@@ -36,11 +37,51 @@ def after_request(response):
 def index():
 	top_headlines = newsapi.get_top_headlines(language='en')
 
-	all_articles = newsapi.get_everything(language='en',
+	sport = newsapi.get_everything(language='en',
+									  q='sport',
 									  domains = 'cnn.com',
                                       sort_by='publishedAt',
                                       page=1)
-	return render_template('index.html', headlines=top_headlines, articles=all_articles)
+	return render_template('index.html', headlines=top_headlines, sport=sport)
+
+
+@app.route("/save", methods=['POST'])
+def save():
+    """Add an article to a user's save list."""
+    title = request.form['title']
+    conn = sqlite3.connect(db)
+    c = conn.cursor()
+    with conn:
+        # Check if the article is in the articles table
+        c.execute("SELECT * FROM articles WHERE title = :title", {'title': title})
+        if len(c.fetchall()) == 0:
+        	c.execute("INSERT INTO articles (title) VALUES (:title)", {'title': title})
+
+        # Obtain the id of the article from the articles table
+        c.execute("SELECT id FROM articles WHERE title = :title", {'title': title})
+        article_id = c.fetchone()[0]
+
+        # Check if the article is already in the user_articles table
+        c.execute("SELECT user_id, article_id FROM user_articles WHERE user_id = :user_id AND article_id = :article_id", {'user_id': session['user_id'], 'article_id': article_id})
+        if len(c.fetchall()) == 0:
+            # Add the article to the user_articles table
+            c.execute("INSERT INTO user_articles (user_id, article_id) VALUES (:user_id, :article_id)", {'user_id': session['user_id'], 'article_id': article_id})
+        else:
+            # Remove the article from the user_articles table
+            c.execute("DELETE FROM user_articles WHERE user_id = :user_id AND article_id = :article_id", {'user_id': session['user_id'], 'article_id': article_id})
+    return redirect("/")
+
+
+
+@app.route("/sport")
+def sport():
+	"""Display a list of sport articles"""
+	sport = newsapi.get_everything(language='en',
+								  q='sport',
+								  domains = 'cnn.com',
+                                  sort_by='publishedAt',
+                                  page=1)
+	return render_template('results.html', sport=sport)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -103,7 +144,6 @@ def register():
     if request.method == "POST":
     	# Connect to the database
 
-
         # Check if a username and password has been entered
         username = request.form.get("username")
         password = request.form.get("password")
@@ -153,6 +193,14 @@ def register():
         return render_template("register.html")
 
 
-if __name__ == '__main__':
 
+
+
+if __name__ == '__main__':
+	news = newsapi.get_everything(language='en',
+								  q="Turn your living room couch into the best seats at every game with Samsung's 2021 TVs",
+								  domains = 'cnn.com',
+                                  sort_by='publishedAt',
+                                  page=1)
+	print(news)
 	app.run(debug=True)
