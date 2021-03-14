@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+	<script src="static/js/results.js"></script>
+	<link href="static/css/results.css" rel="stylesheet">
+	<main class="container">
+		<div class="feed">
+			{% for article in sport.articles %}
+			<div class='post-container shadow'>
+				<div class="image-container">
+					<img src="{{ article.urlToImage }}" alt="{{ article.title }}" class="article-preview-image">
+				</div>
+				<div class='text-container'>
+					<a class="article-title" target="_blank" href="{{ article.url }}"><h3>{{ article.title }}</h3></a>
+					<p>{{ article.description }}</p>
+				</div>
+				<button class="save-button" onclick='saveArticle({{ article.title | tojson }}, $(this))'>
+			        <p class="plus">+</p>
+				</button>
+			</div>
+			{% endfor %}
+		</div>
+	</main>
+{% endblock %}
