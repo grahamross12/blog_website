@@ -17,6 +17,7 @@
 
 .feed {
   padding: 50px;
+  min-height: 1000px;
 }
 
 .article-preview-image {
@@ -32,12 +33,14 @@
 	position: relative;
 	padding: 0px;
 	margin-top: 50px;
-	background-color: #fff;
+	background-color: rgba(255, 255, 255, 0.1);
 	overflow: hidden;
 }
 
 .save-button {
+	text-align: center;
 	position: absolute;
+	margin: auto;
 	right: 0px;
 	height: 100%;
 	background-color: #fff;
@@ -59,35 +62,49 @@
 
 
 .post-container:hover .save-button {
-  width: 50px;
+  width: 40px;
 }
 
 .plus {
+	margin: auto;
 	color: transparent;
 	height: 100%;
 	-webkit-text-stroke: 1px rgba(255, 255, 255, 0.7);
-	font-size: 2rem;
+	font-size: 2.5rem;
 	text-align: center;
 	font-weight: 900;
 	padding: 70px 0;
+	transition: 0.5s;
 }
 
 .article-title {
-	text-decoration: none;
-	color: black;
+	font-size: 1.8rem;
+	font-weight: 400;
+	color: white;
 }
 
 .article-title:hover {
 	text-decoration: none;
-	color: #555;
+}
+
+.article-description {
+	color: white;
+	opacity: 0.6;
 }
 
 .saved {
+	-webkit-text-stroke: 0px;
 	color: rgba(255, 255, 255, 0.7) !important;
-	transition: 0.2s;
+	transition: 0.5s;
 }
 
 .save-button:focus {
 	outline: 0;
 	
+}
+
+.results-title {
+	font-size: 2.2rem;
+	font-weight: 100;
+	color: white;
 }

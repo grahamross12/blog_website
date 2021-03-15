@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block main %}
+	<script src="static/js/results.js"></script>
+	<link href="static/css/results.css" rel="stylesheet">
+	<main class="container">
+		<div class="feed">
+			<h1 class="results-title">{{ title }}</h1><br>
+			<p class="article-title">{{ message }}</p>
+
+		</div>
+	</main>
+{% endblock %}

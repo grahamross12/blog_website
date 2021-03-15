@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Register
+    {{ title }}
 {% endblock %}
 
 {% block main %}
@@ -9,20 +9,30 @@
 	<link href="static/css/results.css" rel="stylesheet">
 	<main class="container">
 		<div class="feed">
-			{% for article in sport.articles %}
-			<div class='post-container shadow'>
-				<div class="image-container">
-					<img src="{{ article.urlToImage }}" alt="{{ article.title }}" class="article-preview-image">
+			<h1 class="results-title">{{ title }}</h1>
+			{% for article in articles.articles %}
+				<div class='post-container shadow'>
+					<div class="image-container">
+						<img src="{{ article.urlToImage }}" alt="{{ article.title }}" class="article-preview-image">
+					</div>
+					<div class='text-container'>
+						<a class="article-title" target="_blank" href="{{ article.url }}">{{ article.title }}</a>
+						<p class="article-description">{{ article.description }}</p>
+					</div>
+					<button class="save-button" onclick='saveArticle({{ article.title | tojson }}, 
+																	 {{ article.url | tojson }},
+																	 {{ article.urlToImage | tojson }},
+																	 {{ article.description | tojson }},
+																	 $(this), 
+																	 {{ session['user_id'] }})'>
+				        <p class="plus">+</p>
+					</button>
 				</div>
-				<div class='text-container'>
-					<a class="article-title" target="_blank" href="{{ article.url }}"><h3>{{ article.title }}</h3></a>
-					<p>{{ article.description }}</p>
-				</div>
-				<button class="save-button" onclick='saveArticle({{ article.title | tojson }}, $(this))'>
-			        <p class="plus">+</p>
-				</button>
-			</div>
 			{% endfor %}
+
 		</div>
 	</main>
+	<script>
+		$(document).ready(check_results({{ saved_titles | tojson }}));
+	</script>
 {% endblock %}
