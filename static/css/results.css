@@ -7,24 +7,31 @@
 .image-container {
 	position: relative;
 	margin-top: 0px;
-	padding: 0px;
+	margin-left: 30px;
 	height: 100%;
-	width: 400px;
+	width: 355.55px;
 	float: right;
 	height: 100%;
-	text-align: right
+	text-align: right;
+	overflow: hidden;
+    background-size: cover;
+  	background-position: center;
+  	background-image: url("https://www.telegraph.co.uk/racing/2021/03/16/cheltenham-festival-2021-live-results-day-one-tips-best-bets/");
 }
+
 
 .feed {
   padding: 50px;
-  min-height: 1000px;
+  min-height: 100%;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .article-preview-image {
 	height: 100%;
-	object-fit: contain;
+	width: 100%;
 	float: right;
 	position:relative;
+	object-fit: cover;
 }
 
 .post-container {
@@ -108,3 +115,4 @@
 	font-weight: 100;
 	color: white;
 }
+

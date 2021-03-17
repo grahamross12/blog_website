@@ -9,8 +9,10 @@ from newsapi import NewsApiClient
 from helpers import login_required
 
 # Initialise NewsAPI
-newsapi = NewsApiClient(api_key='f29c5ca7a2d544889ceaf1396eb0cc75')
+#newsapi = NewsApiClient(api_key='f29c5ca7a2d544889ceaf1396eb0cc75')
+newsapi = NewsApiClient(api_key='8f33ed5353f442099a01fd7a3e63ae96')
 
+domains = 'bbc.co.uk,theguardian.com,telegraph.co.uk,independent.co.uk'
 
 # Configure application
 app = Flask(__name__)
@@ -36,39 +38,29 @@ def after_request(response):
 @app.route("/", methods=['GET'])
 def index():
     
+    # Obtain a list of all the user's saved articles
+    # If user is not logged in, return None
+    if 'user_id' not in session:
+        saved_titles = None
+    else:
+        saved_titles = find_saved_titles(session['user_id'])
+
     categories = ['Politics', 'Finance', 'Technology', 'Sport', 'World']
+    top_headlines = find_headlines()
+    if top_headlines == None:
+        return
 
-    try:
+    article_dicts = []
+    for category in categories:
+        articles = find_articles(category, page_size=3)
 
-        top_headlines = newsapi.get_top_headlines(language='en', country='gb', page_size=3)
-        article_dicts = []
-        for category in categories:
-            articles = newsapi.get_everything(language='en',
-                                           q=category,
-                                           domains = 'bbc.co.uk',
-                                           sort_by='publishedAt',
-                                           page_size=3,
-                                           page=1)
-            article_dict = {'category': category, 'articles': articles['articles']}
-            article_dicts.append(article_dict)
+        if articles == None:
+            return
+        
+        article_dict = {'category': category, 'articles': articles}
+        article_dicts.append(article_dict)
 
-    except Exception as e: 
-            print(e)
-            top_headlines = {'articles': [
-                                        {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                        {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                        {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                        ]}
-            article_dicts = []
-            for category in categories:
-                articles = [{'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                            {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                            {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'}]
-                article_dict = {'category': category, 'articles': articles}    
-                article_dicts.append(article_dict)
-
-            flash("Could not load news from NewsAPI")
-    return render_template('index.html', headlines=top_headlines, all_articles=article_dicts)
+    return render_template('index.html', headlines=top_headlines, all_articles=article_dicts, saved_titles=saved_titles)
 
 
 @app.route("/saving", methods=['POST'])
@@ -85,6 +77,7 @@ def saving():
             url = request.form['url']
             image_url = request.form['image_url']
             description = request.form['description']
+            print(description)
             c.execute("INSERT INTO articles (title, url, image_url, description) VALUES (:title, :url, :image_url, :description)", 
                      {'title': title, 'url': url, 'image_url': image_url, 'description': description})
 
@@ -107,139 +100,111 @@ def saving():
 @login_required
 def saved():
     """List a user's saved articles from the user_articles table"""
-    conn = sqlite3.connect(db)
-    c = conn.cursor()
-    with conn:
-        # Find the articles that the user has saved
-        c.execute("""SELECT * FROM articles WHERE id IN (
-                     SELECT article_id FROM user_articles WHERE user_id = :user_id)""", 
-                     {'user_id': session['user_id']})
-        rows = c.fetchall()
-        if len(rows) == 0:
-            return render_template('empty.html', title='Saved Articles', message="You have no saved articles")
 
-        # Transfer the article info into a dictionary
-        articles = {'articles': []}
-        saved_titles = []
-        for row in rows:
-            article_dict = {}
-            article_dict['title'] = row[1]
-            article_dict['url'] = row[2]
-            article_dict['urlToImage'] = row[3]
-            article_dict['description'] = row[4]
-            articles['articles'].append(article_dict)
-            saved_titles.append(row[1])
+    saved_articles, saved_titles = find_saved_articles(session['user_id'])
+    if saved_articles == None:
+         return render_template('empty.html', title='Saved Articles', message="You have no saved articles")
+
+    # Transfer the article info into a dictionary
         
-        return render_template('results.html', title='Saved Articles', articles=articles, saved_titles=saved_titles)
+    return render_template('results.html', title='Saved Articles', articles=saved_articles, saved_titles=saved_titles)
 
 
 @app.route("/sport")
 def sport():
     """Display a list of sport articles"""
-    # Obtain a list of all the user's saved articles
-    conn = sqlite3.connect(db)
-    c = conn.cursor()
-    with conn:
-        # Find the articles that the user has saved
-        c.execute("""SELECT * FROM articles WHERE id IN (
-                     SELECT article_id FROM user_articles WHERE user_id = :user_id)""", 
-                     {'user_id': session['user_id']})
-        rows = c.fetchall()
-        saved_titles = []
-        for row in rows:
-            saved_titles.append(row[1])
 
-    try:
-        sport = newsapi.get_everything(language='en',
-                                       q='sport',
-                                       domains = 'bbc.co.uk',
-                                       sort_by='publishedAt',
-                                       page=1)
-    except:
-        sport = {'articles': [
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    ]}
+    # Obtain a list of all the user's saved articles
+    # If user is not logged in, return None
+    if 'user_id' not in session:
+        saved_titles = None
+    else:
+        saved_titles = find_saved_titles(session['user_id'])
+
+    # Obtain a list of article dictionaries for the sport query
+    articles = find_articles('sport', page_size=10, page=1)
+    if articles == None:
         flash("Could not load news from NewsAPI")
-    print(saved_titles)
-    return render_template('results.html', title="Sport", articles=sport, saved_titles=saved_titles)
+        return
+
+    return render_template('results.html', title='Sport', articles=articles, saved_titles=saved_titles)
 
 
 @app.route("/technology")
 def technology():
     """Display a list of technology articles"""
-    try:
-        technology = newsapi.get_everything(language='en',
-                                       q='technology',
-                                       domains = 'bbc.co.uk',
-                                       sort_by='publishedAt',
-                                       page=1)
-    except:
-        technology = {'articles': [
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    ]}
+    
+    # Obtain a list of all the user's saved articles
+    # If user is not logged in, return None
+    if 'user_id' not in session:
+        saved_titles = None
+    else:
+        saved_titles = find_saved_titles(session['user_id'])
+
+    # Obtain a list of article dictionaries for the sport query
+    articles = find_articles('technology', page_size=10, page=1)
+    if articles == None:
         flash("Could not load news from NewsAPI")
-    return render_template('results.html', title="Technology", articles=technology, saved_titles=saved_titles)
+        return
+
+    return render_template('results.html', title='Technology', articles=articles, saved_titles=saved_titles)
 
 
 @app.route("/politics")
 def politics():
     """Display a list of politics articles"""
-    try:
-        politics = newsapi.get_everything(language='en',
-                                       q='politics',
-                                       domains = 'bbc.co.uk',
-                                       sort_by='publishedAt',
-                                       page=1)
-    except:
-        politics = {'articles': [
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    ]}
+    
+    # Obtain a list of all the user's saved articles
+    # If user is not logged in, return None
+    if 'user_id' not in session:
+        saved_titles = None
+    else:
+        saved_titles = find_saved_titles(session['user_id'])
+
+    # Obtain a list of article dictionaries for the sport query
+    articles = find_articles('politics', page_size=10, page=1)
+    if articles == None:
         flash("Could not load news from NewsAPI")
-    return render_template('results.html', title="Politics", articles=politics, saved_titles=saved_titles)
+
+    return render_template('results.html', title='Politics', articles=articles, saved_titles=saved_titles)
 
 
 @app.route("/finance")
 def finance():
     """Display a list of finance articles"""
-    try:
-        finance = newsapi.get_everything(language='en',
-                                       q='finance',
-                                       domains = 'bbc.co.uk',
-                                       sort_by='publishedAt',
-                                       page=1)
-    except:
-        finance = {'articles': [
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    ]}
+    
+    # Obtain a list of all the user's saved articles
+    # If user is not logged in, return None
+    if 'user_id' not in session:
+        saved_titles = None
+    else:
+        saved_titles = find_saved_titles(session['user_id'])
+
+    # Obtain a list of article dictionaries for the sport query
+    articles = find_articles('finance', page_size=10, page=1)
+    if articles == None:
         flash("Could not load news from NewsAPI")
-    return render_template('results.html', title="Finance", articles=finance, saved_titles=saved_titles)
+
+    return render_template('results.html', title='Finance', articles=articles, saved_titles=saved_titles)
 
 
 @app.route("/world")
 def world():
     """Display a list of world articles"""
-    try:
-        world = newsapi.get_everything(language='en',
-                                       q='world',
-                                       domains = 'bbc.co.uk',
-                                       sort_by='publishedAt',
-                                       page=1)
-    except:
-        world = {'articles': [
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    ]}
+    
+    # Obtain a list of all the user's saved articles
+    # If user is not logged in, return None
+    if 'user_id' not in session:
+        saved_titles = None
+    else:
+        saved_titles = find_saved_titles(session['user_id'])
+
+    # Obtain a list of article dictionaries for the sport query
+    articles = find_articles('world', page_size=10, page=1)
+    if articles == None:
         flash("Could not load news from NewsAPI")
-    return render_template('results.html', title="World", articles=world, saved_titles=saved_titles)
+
+    return render_template('results.html', title='World', articles=articles, saved_titles=saved_titles)
 
 
 @app.route("/search/<query>")
@@ -248,7 +213,7 @@ def search(query):
     try:
         search = newsapi.get_everything(language='en',
                                        q=query,
-                                       domains = 'bbc.co.uk',
+                                       domains=domains,
                                        sort_by='publishedAt',
                                        page=1)
     except:
@@ -326,7 +291,6 @@ def register():
         username = request.form.get("username")
         password = request.form.get("password")
         email = request.form.get("email")
-        print(email)
 
         if not username:
             return redirect("/register")
@@ -371,8 +335,120 @@ def register():
         return render_template("register.html")
 
 
+@app.route("/account", methods=['GET', 'POST'])
+@login_required
+def account():
+    """Display account information and password change option"""
+    if request.method == 'POST':
+        return render_template("account.html")
+    else:
+        conn = sqlite3.connect(db)
+        c = conn.cursor()
+        with conn:
+            c.execute("SELECT username FROM users WHERE id = :id", {'id': session['user_id']})
+            rows = c.fetchone()
 
+        return render_template("account.html", username=rows[0])
+
+
+def find_articles(query, page_size=10, page=1):
+    """Return the articles dictionary from NewsAPI given a query"""
+    try:
+        articles = newsapi.get_everything(language='en',
+                                       q=query,
+                                       domains = domains,
+                                       sort_by='publishedAt',
+                                       page=page,
+                                       page_size=page_size)
+        if articles['status'] != 'ok':
+            return None
+
+        articles_reduct = []
+        for article in articles['articles']:
+            article_dict = {'title': article['title'],
+                            'url': article['url'],
+                            'urlToImage': article['urlToImage'],
+                            'description': article['description']}
+            articles_reduct.append(article_dict)
+
+        return articles_reduct
+
+    # Return None if there is a problem
+    except Exception as e:
+        print(e)
+        return None
+
+
+def find_saved_titles(user_id):
+    """Find the titles of the saved articles for a given user by querying the user_articles table"""
+    conn = sqlite3.connect(db)
+    c = conn.cursor()
+
+    with conn:
+        # Find the articles that the user has saved
+        c.execute("""SELECT * FROM articles WHERE id IN (
+                     SELECT article_id FROM user_articles WHERE user_id = :user_id)""", 
+                     {'user_id': user_id})
+        rows = c.fetchall()
+        saved_titles = []
+        for row in rows:
+            saved_titles.append(row[1])
+
+        # If user has no saved articles, return None
+        if saved_titles == []:
+            return None
+
+        return saved_titles
+
+
+def find_saved_articles(user_id):
+    """Find the saved titles and the article info for a given user"""
+    conn = sqlite3.connect(db)
+    c = conn.cursor()
+
+    with conn:
+        # Find the articles that the user has saved
+        c.execute("""SELECT title, url, image_url, description FROM articles WHERE id IN (
+                     SELECT article_id FROM user_articles WHERE user_id = :user_id)""", 
+                     {'user_id': user_id})
+        rows = c.fetchall()
+        saved_articles = []
+        saved_titles = []
+        for row in rows:
+            article_dict = {'title': row[0],
+                            'url': row[1],
+                            'urlToImage': row[2],
+                            'description': row[3]}
+            saved_titles.append(row[0])
+            saved_articles.append(article_dict)
+
+        # If user has no saved articles, return None
+        if saved_articles == [] or saved_titles == []:
+            return None, None
+
+
+        return saved_articles, saved_titles
+
+
+def find_headlines(page_size=3, page=1):
+    """Return the articles dictionary from NewsAPI given a query"""
+    try:
+        top_headlines = newsapi.get_top_headlines(language='en',
+                                                  # domains = domains,
+                                                  # sort_by='publishedAt',
+                                                  country='gb',
+                                                  page=page,
+                                                  page_size=page_size)
+        if top_headlines['status'] != 'ok':
+            return None, None
+
+        return top_headlines['articles']
+
+    # Return None if there is a problem
+    except Exception as e:
+        print(e)
+        return None
 
 
 if __name__ == '__main__':
-	app.run(debug=True)
+    app.run(debug=True)

@@ -5,7 +5,6 @@ function saveArticle(title, url, image_url, description, elem, user_id) {
     	return
     }
     elem.find(">:first-child").toggleClass('saved');
-
         $.ajax({
             type: 'POST',
             url: '/saving',
@@ -19,14 +18,37 @@ function saveArticle(title, url, image_url, description, elem, user_id) {
 
 
 function check_results(saved_titles) {
-    let title_elems = $('.post-container').find('.article-title');
-    let button_elems = $('.post-container').find('.plus');
-    console.log(button_elems[1])
+    let elems = $('.post-container');
+    let title_elems = elems.find('.article-title');
+    if (saved_titles == null || title_elems == null) {
+        return;
+    }
     for (var i = 0; i < saved_titles.length; i++) {
         for (let j = 0; j < title_elems.length; j++) {
             if (saved_titles[i] === title_elems[j].text) {
-                console.log(j);
+                elems.eq(j).find('.plus').addClass('saved');
             }
         }
     }
+    return
+}
+
+
+function check_results_homepage(saved_titles) {
+    let elems = $('.post-container-small-all');
+    let title_elems = elems.find('.article-title-text');
+    console.log(title_elems[1].innerText)
+    
+    if (saved_titles == null || title_elems == null) {
+        return;
+    }
+    for (var i = 0; i < saved_titles.length; i++) {
+        
+        for (let j = 0; j < title_elems.length; j++) {
+            if (saved_titles[i] === title_elems[j].innerText) {
+                elems.eq(j).find('.plus').addClass('saved');
+            }
+        }
+    }
+    return
 }

@@ -19,37 +19,37 @@ Homepage
 				<div class="carousel-inner">
 					<div class="carousel-item active">
 						<div class="headline-image-container">
-							<img src="{{ headlines.articles[0].urlToImage }}" alt="{{ headlines.articles[0].title }}" class="headline-preview-image">
+							<img src="{{ headlines[0].urlToImage }}" alt="{{ headlines[0].title }}" class="headline-preview-image">
 						</div>
 						<div class="headline-image-layer"></div>
 						<div class="headline-text-container">
 							{% if headlines != 0 %}
-								<a class="headline-title" target="_blank" href="{{ headlines.articles[0].urlToImage }}">{{ headlines.articles[0].title }}</a>
-								<p class="headline-description">{{ headlines.articles[0].description }}</p>
+								<a class="headline-title" target="_blank" href="{{ headlines[0].url }}">{{ headlines[0].title }}</a>
+								<p class="headline-description">{{ headlines[0].description }}</p>
 							{% endif %}
 						</div>
 					</div>
 					<div class="carousel-item">
 						<div class="headline-image-container">
-							<img src="{{ headlines.articles[1].urlToImage }}" alt="{{ headlines.articles[1].title }}" class="headline-preview-image">
+							<img src="{{ headlines[1].urlToImage }}" alt="{{ headlines[1].title }}" class="headline-preview-image">
 						</div>
 						<div class="headline-image-layer"></div>
 						<div class="headline-text-container">
 							{% if headlines != 0 %}
-								<a class="headline-title" target="_blank" href="{{ headlines.articles[1].urlToImage }}">{{ headlines.articles[1].title }}</a>
-								<p class="headline-description">{{ headlines.articles[1].description }}</p>
+								<a class="headline-title" target="_blank" href="{{ headlines[1].url }}">{{ headlines[1].title }}</a>
+								<p class="headline-description">{{ headlines[1].description }}</p>
 							{% endif %}
 						</div>
 					</div>
 					<div class="carousel-item">
 						<div class="headline-image-container">
-							<img src="{{ headlines.articles[2].urlToImage }}" alt="{{ headlines.articles[2].title }}" class="headline-preview-image">
+							<img src="{{ headlines[2].urlToImage }}" alt="{{ headlines[2].title }}" class="headline-preview-image">
 						</div>
 						<div class="headline-image-layer"></div>
 						<div class="headline-text-container">
 							{% if headlines != 0 %}
-								<a class="headline-title" target="_blank" href="{{ headlines.articles[2].urlToImage }}">{{ headlines.articles[2].title }}</a>
-								<p class="headline-description">{{ headlines.articles[2].description }}</p>
+								<a class="headline-title" target="_blank" href="{{ headlines[2].url }}">{{ headlines[2].title }}</a>
+								<p class="headline-description">{{ headlines[2].description }}</p>
 							{% endif %}
 						</div>
 					</div>
@@ -73,73 +73,78 @@ Homepage
 </div>
 
 
-<main class="container-large">
-		<div class="feed">
-			{% for i in range(4) %}
-				<a class="heading" href="/sport">{{ all_articles[i].category }}</a>
-				<div class="post-container-homepage">
-					<div id="post-container-small-all1">
-						<div class='post-container-small shadow'>
-							<div class="image-container">
-								<img src="{{ all_articles[i].articles[0].urlToImage }}" alt="{{ all_articles[i].articles[0].title }}" class="article-preview-image">
-							</div>
+<div class="container-large">
+	<div class="feed">
+		{% for i in range(4) %}
+			<a class="heading" href="/sport">{{ all_articles[i].category }}</a>
+			<div class="post-container-homepage">
+				<div class="post-container-small-all pcsa1">
+					<div class='post-container-small shadow'>
+						<div class="image-container">
+							<img src="{{ all_articles[i].articles[0].urlToImage }}" alt="{{ all_articles[i].articles[0].title }}" class="article-preview-image">
+						</div>
 
-							<button class="save-button" onclick='saveArticle({{ all_articles[i].articles[0].title | tojson }}, 
-																	 {{ all_articles[i].articles[0].url | tojson }},
-																	 {{ all_articles[i].articles[0].url | tojson }},
-																	 {{ all_articles[i].articles[0].urlToImage | tojson }},
-																	 $(this), 
-																	 {{ session['user_id'] }})'>
-				        		<p class="plus">+</p>
-							</button>
-						</div>
-						<div class='text-container-small'>
-							<a class="article-title-small" target="_blank" href="{{ all_articles[i].articles[0].url }}"><h3 class="article-title-text">{{ all_articles[i].articles[0].title }}</h3></a>
-						</div>
+						<button class="save-button" onclick='saveArticle({{ all_articles[i].articles[0].title | tojson }}, 
+																 {{ all_articles[i].articles[0].url | tojson }},
+																 {{ all_articles[i].articles[0].urlToImage | tojson }},
+																 {{ all_articles[i].articles[0].description | tojson }},
+																 $(this), 
+																 {{ session['user_id'] }})'>
+			        		<p class="plus">+</p>
+						</button>
 					</div>
-
-					<div id="post-container-small-all2">
-						<div class='post-container-small shadow'>
-							<div class="image-container">
-								<img src="{{ all_articles[i].articles[1].urlToImage }}" alt="{{ all_articles[i].articles[1].title }}" class="article-preview-image">
-							</div>
-
-							<button class="save-button" onclick='saveArticle({{ all_articles[i].articles[1].title | tojson }}, 
-																	 {{ all_articles[i].articles[1].url | tojson }},
-																	 {{ all_articles[i].articles[1].url | tojson }},
-																	 {{ all_articles[i].articles[1].urlToImage | tojson }},
-																	 $(this), 
-																	 {{ session['user_id'] }})'>
-								<p class="plus">+</p>
-							</button>
-						</div>
-						<div class='text-container-small'>
-							<a class="article-title-small" target="_blank" href="{{ all_articles[i].articles[1].url }}"><h3 class="article-title-text">{{ all_articles[i].articles[1].title }}</h3></a>
-						</div>
-					</div>
-
-					<div id="post-container-small-all3">
-						<div class='post-container-small shadow'>
-							<div class="image-container">
-								<img src="{{ all_articles[i].articles[2].urlToImage }}" alt="{{ all_articles[i].articles[2].title }}" class="article-preview-image">
-							</div>
-
-							<button class="save-button" onclick='saveArticle({{ all_articles[i].articles[2].title | tojson }}, 
-																	 {{ all_articles[i].articles[2].url | tojson | tojson }},
-																	 {{ all_articles[i].articles[2].url | tojson }},
-																	 {{ all_articles[i].articles[2].urlToImage | tojson }},
-																	 $(this), 
-																	 {{ session['user_id'] }})'>
-				        		<p class="plus">+</p>
-							</button>
-						</div>
-						<div class='text-container-small'>
-							<a class="article-title-small" target="_blank" href="{{ all_articles[i].articles[2].url }}"><h3 class="article-title-text">{{ all_articles[i].articles[2].title }}</h3></a>
-						</div>
+					<div class='text-container-small'>
+						<a class="article-title-small" target="_blank" href="{{ all_articles[i].articles[0].url }}"><h3 class="article-title-text">{{ all_articles[i].articles[0].title }}</h3></a>
 					</div>
 				</div>
-				<div class="divider"></div>
-			{% endfor %}
-		</div>
-</main>
+
+				<div class="post-container-small-all pcsa2">
+					<div class='post-container-small shadow'>
+						<div class="image-container">
+							<img src="{{ all_articles[i].articles[1].urlToImage }}" alt="{{ all_articles[i].articles[1].title }}" class="article-preview-image">
+						</div>
+
+						<button class="save-button" onclick='saveArticle({{ all_articles[i].articles[1].title | tojson }}, 
+																 {{ all_articles[i].articles[1].url | tojson }},
+																 {{ all_articles[i].articles[1].urlToImage | tojson }},
+																 {{ all_articles[i].articles[1].description | tojson }},
+																 $(this), 
+																 {{ session['user_id'] }})'>
+							<p class="plus">+</p>
+						</button>
+					</div>
+					<div class='text-container-small'>
+						<a class="article-title-small" target="_blank" href="{{ all_articles[i].articles[1].url }}"><h3 class="article-title-text">{{ all_articles[i].articles[1].title }}</h3></a>
+					</div>
+				</div>
+
+				<div class="post-container-small-all pcsa3">
+					<div class='post-container-small shadow'>
+						<div class="image-container">
+							<img src="{{ all_articles[i].articles[2].urlToImage }}" alt="{{ all_articles[i].articles[2].title }}" class="article-preview-image">
+						</div>
+
+						<button class="save-button" onclick='saveArticle({{ all_articles[i].articles[2].title | tojson }}, 
+																 {{ all_articles[i].articles[2].url | tojson | tojson }},
+																 {{ all_articles[i].articles[2].urlToImage | tojson }},
+																 {{ all_articles[i].articles[2].description | tojson }},
+																 $(this), 
+																 {{ session['user_id'] }})'>
+			        		<p class="plus">+</p>
+						</button>
+					</div>
+					<div class='text-container-small'>
+						<a class="article-title-small" target="_blank" href="{{ all_articles[i].articles[2].url }}"><h3 class="article-title-text">{{ all_articles[i].articles[2].title }}</h3></a>
+					</div>
+				</div>
+			</div>
+			{% if i != 3 %}
+			<div class="divider"></div>
+			{% endif %}
+		{% endfor %}
+	</div>
+</div>
+<script>
+	$(document).ready(check_results_homepage({{ saved_titles | tojson }}));
+</script>
 {% endblock %}

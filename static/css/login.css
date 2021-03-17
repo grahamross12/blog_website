@@ -1,0 +1,68 @@
+.centered {
+	position: absolute;
+	top: 500px;
+	left: 50%;
+	transform: translate(-50%, -80%);
+}
+
+#login-box {
+	width: 600px;
+	height: 400px;
+	background-color: rgba(255, 255, 255, 0.2);
+}
+
+#register-box {
+	width: 600px;
+	height: 450px;
+	background-color: rgba(255, 255, 255, 0.2);
+}
+
+#account-box {
+	width: 660px;
+  	height: 550px;
+  	background-color: rgba(255, 255, 255, 0.2);
+}
+
+.form-box {
+	width: 70%;
+	height: 50%;
+	margin: auto;
+	top: 50%;
+	transform: translate(0,30%)
+}
+
+#login {
+	color: white;
+	font-size: 3rem;
+	font-weight: 450;
+	padding-bottom: 30px;
+}
+
+#account {
+	color: white;
+	font-size: 2.5rem;
+	font-weight: 450;
+	padding-bottom: 40px;
+}
+
+#username-heading {
+	color: white;
+	font-size: 1.5rem;
+	font-weight: 450;
+	padding-bottom: 10px;
+}
+
+#username {
+	color: #aaa;
+	font-size: 1.1rem;
+	padding-bottom: 20px;
+	padding-left: 20px;
+}
+
+.account-box {
+	width: 70%;
+	height: 70%;
+	margin: auto;
+	top: 20%;
+	transform: translate(0,20%)
+}

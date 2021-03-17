@@ -1,12 +1,28 @@
 body {
-	background-color: #000
+	background-color: #000;
+	min-height: 100%;
+
 }
 
 main {
-	background-color: rgba(255, 255, 255, 0.2);
+	position: relative;
+	min-height: 100%;
 }
 
-.navbar {
+html {
+	height: 100%;
+}
+
+.page-container {
+  position: relative;
+  min-height: 100vh;
+}
+
+.content-wrapper {
+	padding-bottom: 17rem
+}
+
+nav {
 	background-color: #222 !important;
 	z-index: 10;
 }
@@ -49,3 +65,48 @@ main {
 	padding-left: 10px;
 }
 
+footer {
+	height: 17rem;
+	background-color: #222;
+	padding-top: 50px;
+	width: 100%;
+	position: absolute;
+  	bottom: 0;
+}
+
+table {
+	color: white;
+	font-size: 1rem;
+	text-align: center;
+}
+
+th {
+	padding-bottom: 5px;
+}
+
+th a {
+	color: rgba(255, 255, 255, 0.7);
+}
+
+th a:hover {
+	text-decoration: none;
+	color: rgba(255, 255, 255, 0.9);
+}
+
+td a {
+	text-decoration: none;
+	color: rgba(255, 255, 255, 0.5);
+}
+
+td a:hover {
+	text-decoration: none;
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.no-link {
+	color: rgba(255, 255, 255, 0.7);
+}
+
+.footer-nav {
+	width: 800px;
+}

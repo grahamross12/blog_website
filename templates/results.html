@@ -7,10 +7,10 @@
 {% block main %}
 	<script src="static/js/results.js"></script>
 	<link href="static/css/results.css" rel="stylesheet">
-	<main class="container">
+	<div class="container">
 		<div class="feed">
 			<h1 class="results-title">{{ title }}</h1>
-			{% for article in articles.articles %}
+			{% for article in articles %}
 				<div class='post-container shadow'>
 					<div class="image-container">
 						<img src="{{ article.urlToImage }}" alt="{{ article.title }}" class="article-preview-image">
@@ -29,9 +29,8 @@
 					</button>
 				</div>
 			{% endfor %}
-
 		</div>
-	</main>
+	</div>
 	<script>
 		$(document).ready(check_results({{ saved_titles | tojson }}));
 	</script>
