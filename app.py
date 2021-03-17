@@ -9,9 +9,7 @@ from newsapi import NewsApiClient
 from helpers import login_required
 
 # Initialise NewsAPI
-#newsapi = NewsApiClient(api_key='f29c5ca7a2d544889ceaf1396eb0cc75')
-newsapi = NewsApiClient(api_key='8f33ed5353f442099a01fd7a3e63ae96')
-
+newsapi = NewsApiClient(api_key=os.getenv('API_KEY'))
 domains = 'bbc.co.uk,theguardian.com,telegraph.co.uk,channel4.com,sky.com'
 
 # Configure application
