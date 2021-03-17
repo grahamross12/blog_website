@@ -7,6 +7,13 @@
 {% block main %}
 	<script src="static/js/results.js"></script>
 	<link href="static/css/results.css" rel="stylesheet">
+	{% if get_flashed_messages() %}
+    <header>
+        <div id="flash-message" class="alert alert-primary border text-center" role="alert">
+            {{ get_flashed_messages() | join(" ") }}
+        </div>
+    </header>
+	{% endif %}
 	<div class="container">
 		<div class="feed">
 			<h1 class="results-title">{{ title }}</h1>
@@ -29,6 +36,9 @@
 					</button>
 				</div>
 			{% endfor %}
+<!-- 			<div id=show-more-container>
+			<button class="btn btn-outline-success my-2 my-sm-0" type="submit" onclick='load_more_results({{ title | tojson }}, {{ page | tojson }})'>Show more</button>
+			</div> -->
 		</div>
 	</div>
 	<script>

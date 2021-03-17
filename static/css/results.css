@@ -116,3 +116,9 @@
 	color: white;
 }
 
+#show-more-container {
+	position: relative;
+	padding-top: 30px;
+	margin: auto;
+	width: 106px;
+}

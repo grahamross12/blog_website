@@ -1,8 +1,8 @@
 .centered {
-	position: absolute;
-	top: 500px;
+	position: relative;
+	top: 100%;
 	left: 50%;
-	transform: translate(-50%, -80%);
+	transform: translate(-50%, 0%);
 }
 
 #login-box {
@@ -13,13 +13,13 @@
 
 #register-box {
 	width: 600px;
-	height: 450px;
+	height: 500px;
 	background-color: rgba(255, 255, 255, 0.2);
 }
 
 #account-box {
 	width: 660px;
-  	height: 550px;
+  	height: 600px;
   	background-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -45,7 +45,7 @@
 	padding-bottom: 40px;
 }
 
-#username-heading {
+.account-heading {
 	color: white;
 	font-size: 1.5rem;
 	font-weight: 450;
@@ -65,4 +65,14 @@
 	margin: auto;
 	top: 20%;
 	transform: translate(0,20%)
+}
+
+.feed {
+  padding: 50px;
+  min-height: 100%;;
+}
+
+.error {
+	min-height: 20px;
+	display: inline-block;
 }

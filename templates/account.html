@@ -6,18 +6,35 @@
 
 {% block main %}
 <link href="static/css/login.css" rel="stylesheet">
+
+{% if get_flashed_messages() %}
+<header>
+    <div id="flash-message" class="alert alert-primary border text-center" role="alert">
+        {{ get_flashed_messages() | join(" ") }}
+    </div>
+</header>
+{% endif %}
 <div class='container'>
     <div class='feed'>
         <div class='centered' id="account-box">
             <div class='account-box'>
-                <form action="/login" method="post">
+                <form action="/account" method="post">
                     <h3 id="account">Account Information</h3>
-                    <h3 id="username-heading">Username:</h3><p id="username">grahamross</p>
-                    <h3 id="username-heading">Change password:</h3>
-
+                    <h3 class="account-heading">Username:</h3><p id="username">{{ username }}</p>
+                    <h3 class="account-heading">Change password:</h3>
+                    <span id="passwordError" class="error text-danger">
+                    {% if error == 1 %}
+                    Password must be between 4 and 20 characters
+                    {% endif %}
+                    </span>
                     <div class="form-group">
                         <input class="form-control" name="password" placeholder="New password" type="password">
                     </div>
+                    <span id="confirmationError" class="error text-danger">
+                    {% if error == 2 %}
+                    Passwords don't match
+                    {% endif %}
+                    </span>
                     <div class="form-group">
                         <input class="form-control" name="confirmation" placeholder="Confirm password" type="password">
                     </div>

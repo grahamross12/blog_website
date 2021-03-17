@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session, jsonify
 from flask_session import Session
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -12,7 +12,7 @@ from helpers import login_required
 #newsapi = NewsApiClient(api_key='f29c5ca7a2d544889ceaf1396eb0cc75')
 newsapi = NewsApiClient(api_key='8f33ed5353f442099a01fd7a3e63ae96')
 
-domains = 'bbc.co.uk,theguardian.com,telegraph.co.uk,independent.co.uk'
+domains = 'bbc.co.uk,theguardian.com,telegraph.co.uk,channel4.com,sky.com'
 
 # Configure application
 app = Flask(__name__)
@@ -48,14 +48,14 @@ def index():
     categories = ['Politics', 'Finance', 'Technology', 'Sport', 'World']
     top_headlines = find_headlines()
     if top_headlines == None:
-        return
+        return render_template('empty.html', title='Error', message="Error retrieving NewsAPI data")
 
     article_dicts = []
     for category in categories:
         articles = find_articles(category, page_size=3)
 
         if articles == None:
-            return
+            return render_template('empty.html', title='Error', message="Error retrieving NewsAPI data")
         
         article_dict = {'category': category, 'articles': articles}
         article_dicts.append(article_dict)
@@ -96,19 +96,22 @@ def saving():
     return redirect('/')
 
 
-@app.route("/saved")
+@app.route("/saved", methods=['GET', 'POST'])
 @login_required
 def saved():
     """List a user's saved articles from the user_articles table"""
-
     saved_articles, saved_titles = find_saved_articles(session['user_id'])
     if saved_articles == None:
-         return render_template('empty.html', title='Saved Articles', message="You have no saved articles")
+        return render_template('empty.html', title='Saved Articles', message="You have no saved articles")
 
     # Transfer the article info into a dictionary
         
-    return render_template('results.html', title='Saved Articles', articles=saved_articles, saved_titles=saved_titles)
+    return render_template('results.html', title='Saved Articles', articles=saved_articles, saved_titles=saved_titles, page=1)
 
+@app.route("/results")
+def results():
+    """Display more results."""
+    return redirect('/saved')
 
 @app.route("/sport")
 def sport():
@@ -124,8 +127,7 @@ def sport():
     # Obtain a list of article dictionaries for the sport query
     articles = find_articles('sport', page_size=10, page=1)
     if articles == None:
-        flash("Could not load news from NewsAPI")
-        return
+        return render_template('empty.html', title='Error', message="Error retrieving NewsAPI data")
 
     return render_template('results.html', title='Sport', articles=articles, saved_titles=saved_titles)
 
@@ -144,8 +146,7 @@ def technology():
     # Obtain a list of article dictionaries for the sport query
     articles = find_articles('technology', page_size=10, page=1)
     if articles == None:
-        flash("Could not load news from NewsAPI")
-        return
+        return render_template('empty.html', title='Error', message="Error retrieving NewsAPI data")
 
     return render_template('results.html', title='Technology', articles=articles, saved_titles=saved_titles)
 
@@ -164,7 +165,7 @@ def politics():
     # Obtain a list of article dictionaries for the sport query
     articles = find_articles('politics', page_size=10, page=1)
     if articles == None:
-        flash("Could not load news from NewsAPI")
+        return render_template('empty.html', title='Error', message="Error retrieving NewsAPI data")
 
     return render_template('results.html', title='Politics', articles=articles, saved_titles=saved_titles)
 
@@ -183,7 +184,7 @@ def finance():
     # Obtain a list of article dictionaries for the sport query
     articles = find_articles('finance', page_size=10, page=1)
     if articles == None:
-        flash("Could not load news from NewsAPI")
+        return render_template('empty.html', title='Error', message="Error retrieving NewsAPI data")
 
     return render_template('results.html', title='Finance', articles=articles, saved_titles=saved_titles)
 
@@ -202,29 +203,27 @@ def world():
     # Obtain a list of article dictionaries for the sport query
     articles = find_articles('world', page_size=10, page=1)
     if articles == None:
-        flash("Could not load news from NewsAPI")
+        return render_template('empty.html', title='Error', message="Error retrieving NewsAPI data")
 
     return render_template('results.html', title='World', articles=articles, saved_titles=saved_titles)
 
 
-@app.route("/search/<query>")
-def search(query):
+@app.route("/search")
+def search():
     """Search for any category"""
-    try:
-        search = newsapi.get_everything(language='en',
-                                       q=query,
-                                       domains=domains,
-                                       sort_by='publishedAt',
-                                       page=1)
-    except:
-        search = {'articles': [
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    {'title': 'Error', 'description': 'Error', 'urlToImage': 'None'},
-                                    ]}
-        flash("Could not load news from NewsAPI")
-    return render_template('results.html', title="Search", articles=search, saved_titles=saved_titles)
+    query = request.args.get('q')
 
+    if 'user_id' not in session:
+        saved_titles = None
+    else:
+        saved_titles = find_saved_titles(session['user_id'])
+
+    # Obtain a list of article dictionaries for the sport query
+    articles = find_articles(query, page_size=10, page=1)
+    if articles == None:
+        return render_template('empty.html', title='Error', message="Error retrieving NewsAPI data")
+
+    return render_template('results.html', title='Search', articles=articles, saved_titles=saved_titles)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -239,11 +238,11 @@ def login():
 
         # Ensure username was submitted
         if not request.form.get("username"):
-            return redirect('login')
+            return render_template("login.html", error=1)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return redirect('login')
+            return render_template('login.html', error=2)
 
         # Query database for username
         conn = sqlite3.connect(db)
@@ -255,7 +254,7 @@ def login():
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return redirect('login')
+            return render_template('login.html', error=3)
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
@@ -277,7 +276,7 @@ def logout():
     session.clear()
 
     # Redirect user to login form
-    return redirect("/")
+    return redirect("/login")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -290,17 +289,16 @@ def register():
         # Check if a username and password has been entered
         username = request.form.get("username")
         password = request.form.get("password")
-        email = request.form.get("email")
 
-        if not username:
-            return redirect("/register")
+        if not username or len(username) < 4 or len(username) > 20:
+            return render_template("register.html", error=1)
 
-        if not password:
-            return redirect("/register")
+        if not password or len(password) < 4 or len(password) > 20:
+            return render_template("register.html", error=2)
 
         # Check if the passwords match
         if password != request.form.get("confirmation"):
-            return redirect("/register")
+            return render_template("register.html", error=3)
 
         # Check if the username has been taken
         conn = sqlite3.connect(db)
@@ -311,14 +309,14 @@ def register():
         	rows = c.fetchall()
 
         if len(rows) != 0:
-            return redirect("/register")
+            return render_template("register.html", error=4)
 
         # Hash the password before storing it in the database
         hash_password = generate_password_hash(password)
 
         # Add the new user information to the database
         with conn:
-        	c.execute("INSERT INTO users (username, email, hash) VALUES (:username, :email, :hash)", {'username': username, 'email': email, 'hash': hash_password})
+        	c.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)", {'username': username, 'hash': hash_password})
         	conn.commit()
 
         # Log the user in using the details they provided
@@ -340,7 +338,34 @@ def register():
 def account():
     """Display account information and password change option"""
     if request.method == 'POST':
-        return render_template("account.html")
+        conn = sqlite3.connect(db)
+        c = conn.cursor()
+        with conn:
+            c.execute("SELECT username FROM users WHERE id = :id", {'id': session['user_id']})
+            username = c.fetchone()[0]
+
+        password = request.form.get("password")
+        confirmation = request.form.get("confirmation")
+
+        # Check if new password is valid
+        if not password or len(password) < 4 or len(password) > 20:
+            return render_template("account.html", username=username, error=1)
+
+        # Check if passwords match
+        if password != confirmation:
+            return render_template("account.html", username=username, error=2)
+
+        # Update the password information
+        hash_password = generate_password_hash(password)
+        conn = sqlite3.connect(db)
+        c = conn.cursor()
+        with conn:
+            c.execute("UPDATE users SET hash = :hash WHERE id = :id", {'hash': hash_password, 'id': session['user_id']})
+            rows = c.fetchone()
+
+        flash("Your password has been changed")
+        return render_template("account.html", username=username)
+
     else:
         conn = sqlite3.connect(db)
         c = conn.cursor()
@@ -412,6 +437,7 @@ def find_saved_articles(user_id):
                      SELECT article_id FROM user_articles WHERE user_id = :user_id)""", 
                      {'user_id': user_id})
         rows = c.fetchall()
+        rows.reverse()
         saved_articles = []
         saved_titles = []
         for row in rows:
@@ -426,7 +452,6 @@ def find_saved_articles(user_id):
         if saved_articles == [] or saved_titles == []:
             return None, None
 
-
         return saved_articles, saved_titles
 
 
@@ -440,7 +465,7 @@ def find_headlines(page_size=3, page=1):
                                                   page=page,
                                                   page_size=page_size)
         if top_headlines['status'] != 'ok':
-            return None, None
+            return None
 
         return top_headlines['articles']
 

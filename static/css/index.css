@@ -40,14 +40,22 @@
   	margin-left: -500px;
 }
 
+#flash-message-index {
+	z-index: 10;
+	opacity: 0.7;
+	padding-top: 64px;
+}
+
 .header-margin {
+	position: absolute;
 	background-image: url("../img/background-image.jpeg");
 	background-size: 2560px;
 	background-repeat: no-repeat;
+	object-fit: cover;
 	background-attachment: fixed;
   	background-position: center;
   	position: relative;
-  	margin-top: -100px;
+  	margin-top: -130px;
   	height: 800px;
 }
 

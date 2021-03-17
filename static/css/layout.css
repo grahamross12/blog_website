@@ -24,9 +24,13 @@ html {
 
 nav {
 	background-color: #222 !important;
-	z-index: 10;
+	z-index: 15;
 }
 
+#flash-message {
+	z-index: 10;
+	opacity: 0.7;
+}
 
 .navbar-text {
 	padding-right: 10px;
@@ -42,14 +46,31 @@ nav {
 	padding-left: 20px;
 }
 
+.btn-outline-success.focus, .btn-outline-success:focus {
+    box-shadow: none;
+    outline: -webkit-focus-ring-color auto 1px;
+}
+
+.btn-outline-success:not(:disabled):not(.disabled).active:focus, .btn-outline-success:not(:disabled):not(.disabled):active:focus, .show>.btn-outline-success.dropdown-toggle:focus {
+     box-shadow: none !important; 
+}
+
+.btn-outline-success:not(:disabled):not(.disabled).active, .btn-outline-success:not(:disabled):not(.disabled):active, .show>.btn-outline-success.dropdown-toggle {
+    color: #fff !important;
+    background-color: #aaa !important;
+    border-color: #eee !important;
+}
+
 .btn:hover {
 	background-color: rgba(255, 255, 255, 0.3);
 	border-color: rgba(255, 255, 255, 0.3);
 }
 
+.btn:active {background-color: #bbb;}
+
 .dropdown-menu {
 	background-color: rgba(0, 0, 0, 0.6);
-	color: 
+	z-index: 15;
 }
 
 .dropdown-item {

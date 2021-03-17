@@ -52,3 +52,18 @@ function check_results_homepage(saved_titles) {
     }
     return
 }
+
+// function load_more_results(query, page) {
+//     $.ajax({
+//         type: 'GET',
+//         url: '/results',
+//         data: {'query': query,
+//                'page': page}
+//         success: function(response) {
+//         $("#place_for_suggestions").html(response);
+//       },
+//     });
+    
+
+//     return false;
+// }
