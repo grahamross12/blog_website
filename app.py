@@ -474,4 +474,4 @@ def find_headlines(page_size=3, page=1):
         return None
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
