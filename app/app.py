@@ -8,6 +8,7 @@ import sqlite3
 from newsapi import NewsApiClient
 from helpers import login_required
 
+
 # Initialise NewsAPI
 newsapi = NewsApiClient(api_key=os.getenv('API_KEY'))
 domains = 'bbc.co.uk,theguardian.com,telegraph.co.uk,channel4.com,sky.com'
@@ -471,7 +472,3 @@ def find_headlines(page_size=3, page=1):
     except Exception as e:
         print(e)
         return None
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
