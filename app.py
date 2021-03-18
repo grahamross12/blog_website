@@ -17,7 +17,6 @@ domains = 'bbc.co.uk,theguardian.com,telegraph.co.uk,channel4.com,sky.com'
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
-app.secret_key = 'super secret key'
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config.from_object(__name__)
 Session(app)
@@ -474,4 +473,4 @@ def find_headlines(page_size=3, page=1):
         return None
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
