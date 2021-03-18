@@ -472,3 +472,6 @@ def find_headlines(page_size=3, page=1):
     except Exception as e:
         print(e)
         return None
+
+if __name__ == '__main__':
+    app.run()
