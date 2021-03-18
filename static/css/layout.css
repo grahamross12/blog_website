@@ -4,6 +4,10 @@ body {
 
 }
 
+.navbar-nav { 
+    flex-direction: row;
+}
+
 main {
 	position: relative;
 	min-height: 100%;
@@ -16,10 +20,13 @@ html {
 .page-container {
   position: relative;
   min-height: 100vh;
+  min-width: 1200px;
+  margin: 0 auto;
 }
 
 .content-wrapper {
 	padding-bottom: 17rem
+	
 }
 
 nav {
